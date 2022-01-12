@@ -16,16 +16,18 @@ steps:
     npm install
     ng build --prod
   displayName: 'npm install and build'
-- task: npmAuthenticate@0
-  inputs:
-    workingFile: 'ng build'
-- task: AzureWebApp@1
+
+- task: AzureCLI@2
+  displayName: 'Clear Static website'
   inputs:
     azureSubscription: 'Azure subscription 1 (556038d8-ed3a-4ed8-92c6-320b9c15d8b5)'
-    appType: 'webApp'
-    appName: 'angularRepo'
-    deployToSlotOrASE: true
-    resourceGroupName: 'recursos123'
-    slotName: 'production'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
-    deploymentMethod: 'auto'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az storage blob delete-batch --account-name mystorageaccount --source "\$web"'
+- task: AzureCLI@2
+  displayName: 'Upload new Static Website'
+  inputs:
+    azureSubscription: 'Azure subscription 1 (556038d8-ed3a-4ed8-92c6-320b9c15d8b5)'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az storage blob upload-batch --account-name mystorageaccount --destination "\$web" --source ''$(Build.Repository.LocalPath)/dist/myappname'''
