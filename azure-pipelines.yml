@@ -16,6 +16,9 @@ steps:
     npm install
     ng build --prod
   displayName: 'npm install and build'
+- task: npmAuthenticate@0
+  inputs:
+    workingFile: 'ng build'
 - task: AzureWebApp@1
   inputs:
     azureSubscription: 'Azure subscription 1 (556038d8-ed3a-4ed8-92c6-320b9c15d8b5)'
